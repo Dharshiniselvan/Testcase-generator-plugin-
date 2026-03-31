@@ -1,0 +1,28 @@
+{
+  "name": "ai-code-tester",
+  "displayName": "AI Code Tester",
+  "description": "Generate and test AI testcases for your code",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "activationEvents": [
+    "onCommand:aiTester.run"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "aiTester.run",
+        "title": "Run AI Test Cases"
+      }
+    ]
+  },
+  "scripts": {
+    "compile": "tsc -p ./"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/vscode": "^1.80.0"
+  }
+}
