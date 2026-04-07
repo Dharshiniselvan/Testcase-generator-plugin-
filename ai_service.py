@@ -1,73 +1,39 @@
 import json
-from openai import OpenAI
+import google.generativeai as genai
 
-# ✅ सीधे API key डाल रहे हैं (no environment variable issues)
-client = OpenAI(api_key="YOUR_API_KEY_HERE")
-
+# ✅ Using Gemini (Free & Reliable for 15 days)
+genai.configure(api_key="YOUR_GEMINI_API_KEY_HERE")
+model = genai.GenerativeModel('gemini-1.5-flash')
 
 def generate_testcases(code):
     prompt = f"""
-Analyze the following Python code:
+    Analyze this Python code:
+    {code}
 
-{code}
-
-Generate:
-1. At least 5 test cases (include edge cases)
-2. Expected outputs
-3. Time and space complexity
-
-Return ONLY JSON in this format:
-{{
-  "testcases": [
-    {{"input": "1 2", "output": "3"}},
-    {{"input": "5 7", "output": "12"}}
-  ],
-  "complexity": {{
-    "time": "O(n)",
-    "space": "O(1)"
-  }}
-}}
-"""
+    Generate 5 test cases. 
+    Return ONLY a JSON object with this EXACT structure:
+    {{
+      "testcases": [
+        {{"input": [1, 2], "expected": 3}},
+        {{"input": [-1, 1], "expected": 0}}
+      ],
+      "complexity": "O(n)"
+    }}
+    Important: 'input' must be a LIST of arguments.
+    """
 
     try:
-        response = client.chat.completions.create(
-            model="gpt-5-mini",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0
-        )
-
-        ai_output = response.choices[0].message.content.strip()
-
-        # ✅ Clean JSON (handles extra text if AI adds anything)
-        start = ai_output.find("{")
-        end = ai_output.rfind("}")
-        ai_output = ai_output[start:end+1]
-
-        return json.loads(ai_output)
-
+        response = model.generate_content(prompt)
+        # Find the JSON part in the AI text
+        text = response.text
+        start = text.find("{")
+        end = text.rfind("}")
+        return json.loads(text[start:end+1])
     except Exception as e:
-        print("Error:", e)
+        print(f"AI Error: {e}")
         return None
 
-
-# ✅ RUN DIRECTLY
 if __name__ == "__main__":
-    print("Paste your Python code (press ENTER twice to finish):")
-
-    lines = []
-    while True:
-        line = input()
-        if line == "":
-            break
-        lines.append(line)
-
-    code = "\n".join(lines)
-
-    result = generate_testcases(code)
-
-    print("\n=== AI OUTPUT ===\n")
-
-    if result:
-        print(json.dumps(result, indent=2))
-    else:
-        print("Something went wrong.")
+    # Test it locally
+    sample = "def add(a, b): return a + b"
+    print(generate_testcases(sample))
