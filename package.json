@@ -1,20 +1,22 @@
 {
   "name": "ai-code-tester",
   "displayName": "AI Code Tester",
-  "description": "Generate and test AI testcases for your code",
+  "publisher": "my-team",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.80.0"
+    "vscode": "^1.90.0"
   },
-  "activationEvents": [
-    "onCommand:aiTester.run"
-  ],
-  "main": "./out/extension.js",
+  "activationEvents": [],
+  "main": "./dist/src.js",
   "contributes": {
     "commands": [
       {
         "command": "aiTester.run",
         "title": "Run AI Test Cases"
+      },
+      {
+        "command": "aiTester.setKey",
+        "title": "AI Tester: Set Groq API Key"
       }
     ]
   },
@@ -22,7 +24,8 @@
     "compile": "tsc -p ./"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
-    "@types/vscode": "^1.80.0"
+    "@types/node": "^20.19.39",
+    "@types/vscode": "^1.90.0",
+    "typescript": "^5.0.0"
   }
 }
